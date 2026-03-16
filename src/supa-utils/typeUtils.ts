@@ -13,11 +13,14 @@ export type AnyResponse<T> =
   | PostgrestSingleResponse<T>
   | PostgrestMaybeSingleResponse<T>;
 
-export type Success<T> = Extract<PostgrestSingleResponse<T>, { error: null; }>;
+export type Success<T> = Extract<PostgrestSingleResponse<T>, { error: null }>;
 
 export interface SupabaseDatabase {
   public: {
-    Tables: Record<string, { Row: unknown; }>;
-    Views: Record<string, { Row: unknown; }>;
+    Tables: Record<string, { Row: unknown }>;
+    Views: Record<string, { Row: unknown }>;
+  };
+  __InternalSupabase?: {
+    PostgrestVersion: '12';
   };
 }

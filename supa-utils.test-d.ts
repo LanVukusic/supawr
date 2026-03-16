@@ -1,7 +1,6 @@
 import { expectType } from 'tsd';
 import { createSupaWRClient } from './src/supa-utils/client';
 import type { SupabaseDatabase } from './src/supa-utils/typeUtils';
-import type { SupabaseClient } from '@supabase/supabase-js';
 
 interface TestDatabase extends SupabaseDatabase {
   public: {
@@ -15,9 +14,9 @@ interface TestDatabase extends SupabaseDatabase {
   };
 }
 
-const mockSupabase = {} as SupabaseClient<TestDatabase>;
+const mockSupabase = {} as any;
 
-const client = createSupaWRClient({ supabase: mockSupabase });
+const client = createSupaWRClient<TestDatabase>({ supabase: mockSupabase });
 
 expectType<{
   supabase: typeof mockSupabase;
@@ -25,7 +24,7 @@ expectType<{
   refetchTables: typeof client.refetchTables;
 }>(client);
 
-const clientWithOptions = createSupaWRClient({
+const clientWithOptions = createSupaWRClient<TestDatabase>({
   supabase: mockSupabase,
   swr: { revalidateOnFocus: false },
 });

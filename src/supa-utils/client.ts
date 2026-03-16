@@ -1,7 +1,6 @@
 import useSWR from 'swr';
 import type { SWRConfiguration } from 'swr';
 import { mutate } from 'swr';
-import type { SupabaseClient } from '@supabase/supabase-js';
 import { toSupabasePromise } from './supabasePromise';
 import type { AnyResponse, SupabaseDatabase } from './typeUtils';
 
@@ -24,7 +23,7 @@ export interface SupaQueryConfig<
 }
 
 export interface SupaWRClientOptions {
-  supabase: SupabaseClient<SupabaseDatabase>;
+  supabase: any;
   swr?: SWRConfiguration;
 }
 
