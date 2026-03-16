@@ -10,29 +10,23 @@ npm install supa-wr @supabase/supabase-js swr
 
 ## Usage
 
-### 1. Create your Supabase client
+### 1. Create client (once, outside components)
 
 ```ts
+import { createSupaWRClient } from 'supa-wr';
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types/supabase';
 
 const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const client = createSupaWRClient({ supabase });
 ```
 
-### 2. Initialize useSupaWR with your Database type
-
-```ts
-import { useSupaWR } from 'supa-wr';
-import type { Database } from './types/supabase';
-
-const supaWR = useSupaWR<Database>();
-```
-
-### 3. Use in components
+### 2. Use in components
 
 ```tsx
 function DetectionChart({ from, to }: { from: string; to: string }) {
-  const { data: hourlyData, error, isLoading } = supaWR.query({
+  const { data: hourlyData, error, isLoading } = client.useSupaWR({
     table: 'detections',
     params: [from, to],
     query: () =>
@@ -50,24 +44,25 @@ function DetectionChart({ from, to }: { from: string; to: string }) {
 }
 ```
 
-### 4. Refetch/invalidate cache
+### 3. Refetch/invalidate cache
 
 ```ts
 // After mutations, refetch specific tables
-supaWR.refetchTables('detections');
+client.refetchTables('detections');
 
 // Or multiple tables
-supaWR.refetchTables(['detections', 'devices']);
+client.refetchTables(['detections', 'devices']);
 ```
 
 ## API
 
-### `useSupaWR<TDatabase>(options?)`
+### `createSupaWRClient(options)`
 
-Creates a typed SupaWR instance bound to your Database type.
+Creates a typed SupaWR client bound to your Database type.
 
 ```ts
-const supaWR = useSupaWR<Database>({
+const client = createSupaWRClient({
+  supabase,
   swr: {
     revalidateOnFocus: false,
     dedupingInterval: 2000,
@@ -75,24 +70,24 @@ const supaWR = useSupaWR<Database>({
 });
 ```
 
-### `supaWR.query(config)`
+### `client.useSupaWR(config)`
 
 Hook that returns SWR response with caching.
 
 ```ts
-const { data, error, isLoading, mutate } = supaWR.query({
+const { data, error, isLoading, mutate } = client.useSupaWR({
   table: 'table_name',
   params: { /* optional params for cache key */ },
   query: () => supabase.from('table').select('*'),
 });
 ```
 
-### `supaWR.refetchTables(tables)`
+### `client.refetchTables(tables)`
 
 Invalidates and refetches cached data for specified tables.
 
 ```ts
-supaWR.refetchTables('devices');
+client.refetchTables('devices');
 ```
 
 ## TypeScript
@@ -100,6 +95,6 @@ supaWR.refetchTables('devices');
 The library is fully typed. Pass your Supabase `Database` type to get autocomplete for table names:
 
 ```ts
-const supaWR = useSupaWR<Database>();
+const client = createSupaWRClient({ supabase });
 // table: autocomplete shows 'devices', 'detections', etc.
 ```
