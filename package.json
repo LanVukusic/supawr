@@ -1,0 +1,40 @@
+{
+  "name": "supa-wr",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "author": {
+    "email": "info@lanvukusic.com",
+    "name": "Lan"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/supa-wr.umd.cjs",
+  "module": "./dist/supa-wr.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/supa-wr.js",
+      "require": "./dist/supa-wr.umd.cjs"
+    }
+  },
+  "peerDependencies": {
+    "@supabase/supabase-js": "^2.99.2",
+    "swr": "^2.4.1"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@supabase/supabase-js": "^2.99.2",
+    "swr": "^2.4.1",
+    "typescript": "~5.9.3",
+    "vite": "^8.0.0",
+    "vite-plugin-dts": "^4.5.4"
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+}
