@@ -7,6 +7,10 @@
     "email": "info@lanvukusic.com",
     "name": "Lan"
   },
+  "repository": {
+    "url": "https://github.com:LanVukusic/supawr.git",
+    "type": "git"
+  },
   "files": [
     "dist"
   ],
