@@ -1,6 +1,7 @@
 import { expectType } from 'tsd';
-import { useSupaWR } from './src/supa-utils/client';
+import { createSupaWRClient } from './src/supa-utils/client';
 import type { SupabaseDatabase } from './src/supa-utils/typeUtils';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 interface TestDatabase extends SupabaseDatabase {
   public: {
@@ -14,22 +15,33 @@ interface TestDatabase extends SupabaseDatabase {
   };
 }
 
-const testDatabase = {} as TestDatabase;
+const mockSupabase = {} as SupabaseClient<TestDatabase>;
 
-const supaWR = useSupaWR(testDatabase);
+const client = createSupaWRClient({ supabase: mockSupabase });
 
-expectType<{ query: typeof supaWR.query; refetchTables: typeof supaWR.refetchTables }>(supaWR);
+expectType<{
+  supabase: typeof mockSupabase;
+  useSupaWR: typeof client.useSupaWR;
+  refetchTables: typeof client.refetchTables;
+}>(client);
 
-const supaWRWithOptions = useSupaWR(testDatabase, { swr: { revalidateOnFocus: false } });
+const clientWithOptions = createSupaWRClient({
+  supabase: mockSupabase,
+  swr: { revalidateOnFocus: false },
+});
 
-expectType<{ query: typeof supaWRWithOptions.query; refetchTables: typeof supaWRWithOptions.refetchTables }>(supaWRWithOptions);
+expectType<{
+  supabase: typeof mockSupabase;
+  useSupaWR: typeof clientWithOptions.useSupaWR;
+  refetchTables: typeof clientWithOptions.refetchTables;
+}>(clientWithOptions);
 
-const result = supaWR.query({
+const result = client.useSupaWR({
   table: 'devices',
   query: async () => ({ data: [{ id: 1, name: 'test' }], error: null } as any),
 });
 
 expectType<{ data: any; error: any; mutate: any; isValidating: any }>(result);
 
-supaWR.refetchTables('devices');
-supaWR.refetchTables(['devices', 'detections']);
+client.refetchTables('devices');
+client.refetchTables(['devices', 'detections']);

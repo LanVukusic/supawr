@@ -3,7 +3,8 @@ export {
 } from './supabasePromise';
 
 export {
-  useSupaWR,
+  createSupaWRClient,
+  type SupaWRClient,
   type SupaQueryConfig,
   type TableNames,
   type TableName,

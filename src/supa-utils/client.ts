@@ -1,6 +1,7 @@
 import useSWR from 'swr';
 import type { SWRConfiguration } from 'swr';
 import { mutate } from 'swr';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { toSupabasePromise } from './supabasePromise';
 import type { AnyResponse, SupabaseDatabase } from './typeUtils';
 
@@ -22,7 +23,8 @@ export interface SupaQueryConfig<
   query: () => PromiseLike<AnyResponse<unknown>>;
 }
 
-export interface UseSupaWROptions {
+export interface SupaWRClientOptions {
+  supabase: SupabaseClient<SupabaseDatabase>;
   swr?: SWRConfiguration;
 }
 
@@ -36,23 +38,24 @@ function supaCacheKey<TTable, TParams>(
   });
 }
 
-export function useSupaWR<TDatabase extends SupabaseDatabase>(
-  _database: TDatabase,
-  options: UseSupaWROptions = {},
+export function createSupaWRClient<TDatabase extends SupabaseDatabase>(
+  options: SupaWRClientOptions,
 ) {
-  function useSupaWRQuery<
+  const { supabase, swr: swrOptions } = options;
+
+  function useSupaWR<
     _T,
     TTable extends TableNames<TDatabase>,
     TParams = unknown,
   >(config: SupaQueryConfig<TDatabase, TTable, TParams>) {
     const key = supaCacheKey(config);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return useSWR(key, () => toSupabasePromise<any>(config.query() as any), options.swr) as any;
+    return useSWR(key, () => toSupabasePromise<any>(config.query() as any), swrOptions) as any;
   }
 
-  function refetchTables(tables: TableName<TDatabase> | TableName<TDatabase>[]) {
-    const tableList = Array.isArray(tables) ? tables : [tables];
-    for (const table of tableList) {
+  function refetchTables(tableNames: TableName<TDatabase> | TableName<TDatabase>[]) {
+    const tables = Array.isArray(tableNames) ? tableNames : [tableNames];
+    for (const table of tables) {
       mutate(
         (key: string) => {
           try {
@@ -69,7 +72,12 @@ export function useSupaWR<TDatabase extends SupabaseDatabase>(
   }
 
   return {
-    query: useSupaWRQuery,
+    supabase,
+    useSupaWR,
     refetchTables,
   };
 }
+
+export type SupaWRClient<TDatabase extends SupabaseDatabase> = ReturnType<
+  typeof createSupaWRClient<TDatabase>
+>;
