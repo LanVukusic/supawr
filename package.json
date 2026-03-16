@@ -1,5 +1,5 @@
 {
-  "name": "supa-wr",
+  "name": "@lanvukusic/supa-wr",
   "version": "0.1.0",
   "private": false,
   "type": "module",
@@ -27,14 +27,21 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:types": "tsc --noEmit"
   },
   "devDependencies": {
     "@supabase/supabase-js": "^2.99.2",
+    "@testing-library/react": "^16.3.2",
+    "jsdom": "^29.0.0",
     "swr": "^2.4.1",
+    "tsd": "^0.33.0",
     "typescript": "~5.9.3",
     "vite": "^8.0.0",
-    "vite-plugin-dts": "^4.5.4"
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^4.1.0"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

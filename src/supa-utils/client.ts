@@ -22,12 +22,12 @@ export interface SupaQueryConfig<
   query: () => PromiseLike<AnyResponse<unknown>>;
 }
 
-export interface SupaWRClientOptions {
+export interface UseSupaWROptions {
   swr?: SWRConfiguration;
 }
 
 function supaCacheKey<TTable, TParams>(
-  config: { table: TTable; params?: TParams; },
+  config: { table: TTable; params?: TParams },
 ): string {
   const tables = Array.isArray(config.table) ? config.table : [config.table];
   return JSON.stringify({
@@ -36,11 +36,11 @@ function supaCacheKey<TTable, TParams>(
   });
 }
 
-export function createSupaWR<TDatabase extends SupabaseDatabase>(
+export function useSupaWR<TDatabase extends SupabaseDatabase>(
   _database: TDatabase,
-  options: SupaWRClientOptions = {},
+  options: UseSupaWROptions = {},
 ) {
-  function useSupaWR<
+  function useSupaWRQuery<
     _T,
     TTable extends TableNames<TDatabase>,
     TParams = unknown,
@@ -57,7 +57,7 @@ export function createSupaWR<TDatabase extends SupabaseDatabase>(
         (key: string) => {
           try {
             const parsed = JSON.parse(key);
-            return parsed && parsed.table === table;
+            return parsed && parsed.tables?.includes(table);
           } catch {
             return false;
           }
@@ -69,11 +69,7 @@ export function createSupaWR<TDatabase extends SupabaseDatabase>(
   }
 
   return {
-    getSupaWR: useSupaWR,
+    query: useSupaWRQuery,
     refetchTables,
   };
 }
-
-export type SupaWRClient<TDatabase extends SupabaseDatabase> = ReturnType<
-  typeof createSupaWR<TDatabase>
->;

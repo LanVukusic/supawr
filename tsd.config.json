@@ -1,0 +1,10 @@
+{
+  "files": ["*.test-d.ts"],
+  "compilerOptions": {
+    "target": "ES2023",
+    "module": "ESNext",
+    "strict": true,
+    "skipLibCheck": true,
+    "moduleResolution": "bundler"
+  }
+}
